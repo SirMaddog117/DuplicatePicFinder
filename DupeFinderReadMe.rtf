@@ -1,0 +1,61 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf760
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww17360\viewh16420\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 # DuplicateImageFinder\
+A hobby effort to build a set of tools to identify duplicate images across 25,000 to 50,000 images using image recognition and other techniques.  The tool (ToDo:) will contain capability to adjust \'93dates\'94 for retained images such as \'93date taken\'94 and file date to try and establish most likely \'93date taken\'94.  \
+\
+** Plan For What Appears to be 4 Tools **\
+\
+(BIISTool) \
+Build Initial Image Scanning data base creation tool.  \
+The tool will scan designated locations for all \'93image\'94 files, create image rec data and store the information. \
+1. Allow for user selection of locations to scan\
+2. Populate data base while scanning all locations\
+3. leverage image recognition tools to create hash values to use to match similar files\
+\
+(DCTool) \
+Deletion Candidate Tool.  \
+Deletion candidates are identified  through rules specified by the user from the array of possible data in the data base.   \
+1. Allow entry (in some way) of deletion candidate selection criteria   Initial methodology will be a text file to simplify this process\
+ 	A. Create python code file to do the candidate selection leveraging SQL. (this may not be best option)\
+3. Scan data base using the criteria and create list (also stored in the data base) of similar images (may be 2 or more) that match each other based on \'93matching rules\'94\
+4. Identify all image files that have \'93no duplicates\'94 and load this data set into a separate table.  Intent for this data is to facilitate movement of these files to a new location and reduce scan time of original locations.  All images for which there are no duplicates would be read and written to a new storage location. Duplicate images once resolved would follow to that location.\
+5. Determine which file is the \'93original\'94 or DupeSetMaster - and assert what all dates\\changes need to be based on data in similar files\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 	1. Each file will be marked in data base as a likely duplicate in a set (DupeSet) of similar files\
+	2. Files in DupeSet are each classified as to deletion priority within the set (a score measuring similarity) with one image (DupeSetMaster) considered the keeper image in the DupeSet.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \
+\
+(DWTDTool) Create tool to facilitate allowing user to decide what to delete. User my \'93look\'94 at candidates and make individual keep\\toss decisions. \
+\
+(DCDTool) Create a tool that deletes chosen duplicates and performs final image library creation. (we need to decide what to do about files altered previously by other tools (PSP, and other editors).\
+\
+\
+** Additional Architecture Features **\
+1. All tools can be rerun multiple times and all operations can be \'93undone\'94.\
+2. Backs up images before doing deletions\
+3. Allows for restore of "all" deleted images or selected deleted images\
+4. Calculates "saved space" and other metrics  \
+5. Allows for user to delete the Deleted Items Repository\
+6. Allow for identification and \'93marking\'94 of images that have detectable defects (blurry, too dark, or other bad image situations). \
+7. Focus on use of Python for this process and leverage existing open source libraries for the bulk of this work.\
+\
+BIISTool Detailed Design \
+1. provide for specification of a list of locations available to the local computer to search for duplicate files\
+2. Allow for recursive search of directories "starting" at each specified location\
+3. Capture EXIF and other data (a defined field list) about each image if the data exists in the image file or the directory location\
+  	A. This data will further aid in identifying the oldest of two images as well as get us closer to an exact "date taken" if possible (image dates can change when copied by different operating systems or can change when different tools "touch" them.  Not all images retain data - which must be accounted for.\
+4. Save all of the information into a data base for better query and join across the various fields\
+  A. Image physical path\
+  B. Image name\
+  C. Image based date, and camera (like manufacturer) Information\
+    1. EXIF or other "date taken"\
+  D. Other disk based information such as dates, file size, file extension\
+  E. result of initial image comparison "hash" for later image recognition\
+  F. retain image recognition calculated bitmap\
+5. Provide for display of processing information during scanning allowing the user to be aware of progress}
